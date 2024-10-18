@@ -21,23 +21,27 @@
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
+            <MudNavLink Href="/Pics"
+                        Icon="@Icons.Material.Filled.CameraAlt"
+                        Match="NavLinkMatch.All"
+                        IconColor="Color.Info">
+                <span style="color: white;">Pics</span>
+            </MudNavLink>
         </div>
 
-        <div class="nav-item px-3">
+
+        <div class="nav-item px-3"> <!-- Simpler way of displaying nav bar icons -->
             <NavLink class="nav-link" href="Test">
             <MudIcon Icon="@Icons.Material.Filled.Bathtub" Title="Test" /> Testerino
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <MudNavLink Href="/Whatever"
+        <div class="nav-item px-3"> <!-- More Complex way of displaying nav bar icons -->
+            <MudNavLink Href="/Data"
                         Icon="@MaterialDesignIcons.Normal.Pirate"
                         Match="NavLinkMatch.All"
                         IconColor="Color.Info">
-                <span style="color: white;">Whatever</span>
+                <span style="color: white;">Data</span>
             </MudNavLink>
         </div>
 

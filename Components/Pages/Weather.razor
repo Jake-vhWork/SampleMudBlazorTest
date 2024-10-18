@@ -1,64 +1,92 @@
-﻿@page "/weather"
+﻿@page "/Pics"
 @attribute [StreamRendering]
 
-<PageTitle>Weather</PageTitle>
+<PageTitle>Pics!</PageTitle>
 
-<h1>Weather</h1>
+<h1>Random Pictures!!!</h1>
+@using MudBlazor.Utilities
+<br />
+<br />
 
-<p>This component demonstrates showing data.</p>
+<!-- Tabs -->
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<MudTabs Elevation="4" Rounded="true" Centered="true" Color="@Color.Primary">
+    <MudTabPanel Text="Picture Gallery 1" />
+    <MudTabPanel Text="Picture Gallery 2" />
+    <MudTabPanel Text="Picture Gallery 3" />
+</MudTabs>
+
+
+<br />
+<br />
+
+<!--  Pic gallery -->
+
+<MudGrid>
+    <MudItem xs="12" sm="8" Class="d-flex align-center flex-wrap">
+        <MudGallery @ref="_gallery" ImageSource="_source" ItemPerLine="_itemPerLine" EnableBackdropClick="_enableBackdropClick"
+                    ShowToolboxCloseButton="_showToolboxCloseButton" ShowToolboxNavigationButtons="_showToolboxNavigationButtons"
+                    MaxWidth="_maxWidth" StyleSelectedImage="@ImageStyle" EnableAnimation="_enableAnimation">
+            <ToolboxTopContent>
+                <MudText Class="white-text pa-4">Image @(_gallery?.GetSelectedImageIndex() + 1) - Description</MudText>
+            </ToolboxTopContent>
+            <ToolboxBottomContent>
+                <MudIconButton Class="white-text" Icon="@Icons.Material.Outlined.Edit" />
+                <MudIconButton Class="white-text" Icon="@Icons.Material.Outlined.RotateRight" OnClick="ArrangeRotateValue" />
+                @if (_showToolboxCloseButton == false)
+                {
+                    <MudIconButton Class="white-text" Icon="@Icons.Material.Outlined.Close" OnClick="@(() => _gallery?.ChangeMenu(false))" />
+                }
+            </ToolboxBottomContent>
+        </MudGallery>
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+        <MudStack Spacing="4">
+            <MudNumericField @bind-Value="_itemPerLine" Label="Item Per Line" Variant="Variant.Outlined" Margin="Margin.Dense" />
+            <MudSwitchM3 @bind-Value="_enableBackdropClick" Color="Color.Secondary" Label="Enable Backdrop Click" />
+            <MudSwitchM3 @bind-Value="_showToolboxCloseButton" Color="Color.Secondary" Label="Toolbox Close Button" />
+            <MudSwitchM3 @bind-Value="_showToolboxNavigationButtons" Color="Color.Secondary" Label="Toolbox Navigation Buttons" />
+            <MudSwitchM3 @bind-Value="_enableAnimation" Color="Color.Secondary" Label="Animation" />
+            <MudSelect @bind-Value="_maxWidth" Variant="Variant.Outlined" Label="MaxWidth" Margin="Margin.Dense" Dense="true">
+                @foreach (MaxWidth item in Enum.GetValues<MaxWidth>())
+                {
+                    <MudSelectItem Value="item">@item.ToDescriptionString()</MudSelectItem>
+                }
+            </MudSelect>
+        </MudStack>
+    </MudItem>
+</MudGrid>
 
 @code {
-    private WeatherForecast[]? forecasts;
+    MudGallery? _gallery;
+    int _itemPerLine = 2; // number of pics per line
+    bool _enableBackdropClick = true;
+    bool _showToolboxCloseButton = true;
+    bool _showToolboxNavigationButtons = true;
+    bool _enableAnimation = true;
+    int _rotateValue = 0;
+    MaxWidth _maxWidth = MaxWidth.Medium;
 
-    protected override async Task OnInitializedAsync()
+    private string ImageStyle => new StyleBuilder()
+        .AddStyle("transform", $"rotate({_rotateValue}deg)")
+        .Build();
+
+        // picture sources
+
+    List<string> _source = new() {
+        "https://mudblazor.com/images/castle.jpg",
+        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2023/09/mazinger-z.jpg",
+        "https://res.cloudinary.com/unix-center/image/upload/c_limit,dpr_3.0,f_auto,fl_progressive,g_center,h_580,q_75,w_906/sflpbzzacdrkbugq7xvq.jpg",
+        "https://image.tmdb.org/t/p/w500/5LrI4GiCSrChgkdskVZiwv643Kg.jpg"};
+
+    private void ArrangeRotateValue()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        if (_rotateValue == 270)
         {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
-    }
-
-    private class WeatherForecast
-    {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+            _rotateValue = 0;
+            return;
+        }
+        _rotateValue += 90;
     }
 }
